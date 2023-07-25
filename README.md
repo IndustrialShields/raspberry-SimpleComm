@@ -16,6 +16,41 @@ Programs that want to use the SimpleComm library dynamically (installed system-w
 
 **WARNING: If you change the SimplePacketConfig.h header when dynamically linking, you will need to reinstall the library!**
 
+## Substituting the Stream class
+The **Stream** class is fundamental for communication in Arduino, as it's an abstraction that enables the standardized handling of data streams across various communication interfaces. Because SimpleComm was designed for Arduino, it heavily relies on the Stream Class as its core communication abstraction. To make the library compatible with Linux and retain its functionality seamlessly, we focused on adapting the Stream class from the Arduino world into the Linux world.
+
+Basically, the Stream class is an abstract class that implements three virtual functions:
+* ```std::size_t write(const uint8_t* data, std::size_t count)```
+* ```int read(void)```
+* ```std::size_t available(void)```
+
+These functions have the same signature as the ones used by the Stream Class, so the SimpleComm library can use all the derived classes from it without any modifications.
+
+### FileStream
+The **FileStream** class is a specialized class that extends the capabilities of the Stream class, specifically designed to implement essential functions like `write()`, `read()`, and `available()` for **C++ fstream** objects. This adaptation enables users to use file-based communication methods, such as pipes (IPC) or other devices like UART and RS-485.
+
+A FileStream object can be created using either a C-String or a String Object that contains the name of the file:
+```c++
+FileStream stream = FileStream("/dev/ttySC0");
+// ...
+// ...
+uint8_t destination = 0;
+SimpleComm.send(stream, packet, destination);
+```
+
+### SockStream
+**SockStream** is a specialized class that extends the Stream class to implement the `write()`, `read()`, and `available()` functionsd for **C Sockets**. This class makes possible using SimpleComm with sockets, like for example TCP/IP or UNIX sockets.
+
+A SockStream object can only be created using the socket file descriptor:
+```c++
+int socket_desc = socket(AF_INET , SOCK_STREAM , 0);
+// connect(...)
+SockStream stream = SockStream(socket_desc);
+// ..
+uint8_t destination = 0;
+SimpleComm.send(stream, packet, destination);
+```
+
 ## Reference
 
 ```c++
