@@ -39,7 +39,7 @@ SimpleComm.send(stream, packet, destination);
 ```
 
 ### SockStream
-**SockStream** is a specialized class that extends the Stream class to implement the `write()`, `read()`, and `available()` functionsd for **C Sockets**. This class makes possible using SimpleComm with sockets, like for example TCP/IP or UNIX sockets.
+**SockStream** is a specialized class that extends the Stream class to implement the `write()`, `read()`, and `available()` functions for **C Sockets**. This class makes possible using SimpleComm with sockets, like for example TCP/IP or UNIX sockets.
 
 A SockStream object can only be created using the socket file descriptor:
 ```c++
